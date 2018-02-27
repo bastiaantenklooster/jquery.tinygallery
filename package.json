@@ -1,0 +1,23 @@
+{
+  "name": "jquery.tinygallery",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bastiaantenklooster/jquery.tinygallery.git"
+  },
+  "author": "Bastiaan ten Klooster",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bastiaantenklooster/jquery.tinygallery/issues"
+  },
+  "homepage": "https://github.com/bastiaantenklooster/jquery.tinygallery#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.1.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-declare": "^0.3.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.4"
+  }
+}
