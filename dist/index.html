@@ -18,6 +18,15 @@
         </ul>
     </div>
 
+    <div class="tg-gallery">
+        <ul>
+            <li class="gallery-slide">1</li>
+            <li class="gallery-slide">2</li>
+            <li class="gallery-slide">3</li>
+            <li class="gallery-slide">4</li>
+            <li class="gallery-slide">5</li>
+        </ul>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script src="tinygallery.jquery.min.js"></script>
@@ -25,6 +34,12 @@
         let gallery = $('.tg-gallery').tinyGallery({
 
         });
+
+        gallery.end().css({
+            color: 'blue'
+        });
+
+        gallery.next();
     </script>
 </body>
 </html>

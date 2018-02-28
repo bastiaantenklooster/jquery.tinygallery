@@ -47,7 +47,8 @@
             setting: (key, value) => {
                 this.settings[key] = value;
             },
-            destroy: () => this.destroy()
+            destroy: () => this.destroy(),
+            end: () => this.element
         };
     }
 
