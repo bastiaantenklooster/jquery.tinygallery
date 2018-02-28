@@ -26,11 +26,14 @@
     function Plugin(element, options) {
         this.element = element;
 
+        // A gallery can only be initialized on a single container
+        this.galleryElement = element.first();
+
         this.settings = $.extend({}, defaults, options);
         this.defaults = defaults;
         this.name = pluginName;
         this.playing = false;
-        this.previousPlaying = false;
+        this.previousPlayingState = false;
         this.playTimeout = null;
         this.previousReadyState = false;
 
@@ -100,7 +103,7 @@
         },
 
         stop: function () {
-            this.previousPlaying = this.playing;
+            this.previousPlayingState = this.playing;
 
             this.playing = false;
             clearTimeout(this.playTimeout);
@@ -130,7 +133,7 @@
         },
 
         getSlides: function () {
-            return $(this.element).find(this.settings.slideSelector);
+            return $(this.galleryElement).find(this.settings.slideSelector);
         },
 
         getActiveSlide: function (slides) {
@@ -173,7 +176,7 @@
 
             this.onChangeEvent($next, $current);
 
-            if (!auto && this.previousPlaying && this.settings.autoresume) {
+            if (!auto && this.previousPlayingState && this.settings.autoresume) {
                 this.play();
             }
 
@@ -185,27 +188,27 @@
 
         onPlayEvent: function () {
             this.settings.onPlay();
-            this.element.trigger(this.settings.eventNamespace + 'play');
+            this.galleryElement.trigger(this.settings.eventNamespace + 'play');
         },
 
         onStopEvent: function () {
             this.settings.onStop();
-            this.element.trigger(this.settings.eventNamespace + 'stop');
+            this.galleryElement.trigger(this.settings.eventNamespace + 'stop');
         },
 
         onReadyEvent: function () {
             this.settings.onReady();
-            this.element.trigger(this.settings.eventNamespace + 'ready');
+            this.galleryElement.trigger(this.settings.eventNamespace + 'ready');
         },
 
         onBeforeChangeEvent: function ($current, $next) {
             this.settings.onBeforeChange($current, $next);
-            this.element.trigger(this.settings.eventNamespace + 'beforechange', [$current, $next]);
+            this.galleryElement.trigger(this.settings.eventNamespace + 'beforechange', [$current, $next]);
         },
 
         onChangeEvent: function ($next, $current) {
             this.settings.onChange($next, $current);
-            this.element.trigger(this.settings.eventNamespace + 'change', [$next, $current]);
+            this.galleryElement.trigger(this.settings.eventNamespace + 'change', [$next, $current]);
         },
 
         destroy: function () {
