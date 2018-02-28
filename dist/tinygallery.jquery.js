@@ -1,4 +1,4 @@
-/*
+/**
  *
  */
 ;(function ($, window, document) {
@@ -9,7 +9,7 @@
             slideSelector: '.gallery-slide',
             activeClass: 'active',
             start: 0,
-            autoplay: true,
+            autoplay: false,
             autoresume: true,
             duration: 2000,
             keyboard: true,
@@ -18,7 +18,10 @@
             onChange: $.noop,
             onBeforeChange: $.noop,
             onPlay: $.noop,
-            onStop: $.noop
+            onStop: $.noop,
+            onReady: $.noop,
+            await: (slides, current) => false,
+            eventNamespace: pluginName.toLowerCase()
         },
         dataKey = "plugin_" + pluginName;
 
@@ -29,11 +32,15 @@
         this.defaults = defaults;
         this.name = pluginName;
         this.playing = false;
+        this.previousPlaying = false;
         this.playTimeout = null;
+        this.previousReadyState = false;
+
         this.init();
 
         return {
             current: () => this.getActiveSlide(this.getSlides()),
+            slides: () => this.getSlides(),
             next: () => this.next(),
             previous: () => this.previous(),
             goto: (index) => this.goto(index),
@@ -41,7 +48,8 @@
             stop: () => this.stop(),
             setting: (key, value) => {
                 this.settings[key] = value;
-            }
+            },
+            destroy: () => this.destroy()
         };
     }
 
@@ -56,6 +64,8 @@
             if (this.settings.autoplay) {
                 this.play();
             }
+
+            const ready = this.ready();
         },
 
         handleKeys: function (event) {
@@ -76,29 +86,46 @@
         play: function () {
             const timeout = () => this.playTimeout = setTimeout(loop, this.settings.duration);
             const loop = () => {
-                this.next(true);
+                if (this.ready()) {
+                    this.next(true);
+                }
 
                 timeout();
             };
 
             this.playing = true;
 
-            this.settings.onPlay();
+            this.onPlayEvent();
 
             timeout();
         },
 
         stop: function () {
+            this.previousPlaying = this.playing;
+
             this.playing = false;
             clearTimeout(this.playTimeout);
 
-            this.settings.onStop();
+            this.onStopEvent();
+        },
+
+        ready: function () {
+            const $slides = this.getSlides();
+            const ready = !this.settings.await($slides, this.getActiveSlide($slides));
+
+            if (ready && ready !== this.previousReadyState) {
+                this.onReadyEvent();
+            }
+
+            this.previousReadyState = ready;
+
+            return ready;
         },
 
         setActiveSlide: function (index) {
             const $slides = this.getSlides();
 
-            $slides.removeClass(this.settings.activeClass);
+            $slides.not(':eq('+index+')').removeClass(this.settings.activeClass);
 
             $slides.eq(index).addClass(this.settings.activeClass);
         },
@@ -131,7 +158,7 @@
         },
 
         change: function (difference, auto) {
-            if (!auto) {
+            if (!auto && this.playing) {
                 this.stop();
             }
 
@@ -141,13 +168,13 @@
             const nextIndex = (index + difference) % $slides.length;
             const $next = $slides.eq(nextIndex);
 
-            this.settings.onBeforeChange($current, $next);
+            this.onBeforeChangeEvent($current, $next);
 
             this.setActiveSlide(nextIndex);
 
-            this.settings.onChange($next, $current);
+            this.onChangeEvent($next, $current);
 
-            if (!auto && this.settings.autoresume) {
+            if (!auto && this.previousPlaying && this.settings.autoresume) {
                 this.play();
             }
 
@@ -155,6 +182,37 @@
                 previous: $current,
                 current: $next
             };
+        },
+
+        onPlayEvent: function () {
+            this.settings.onPlay();
+            this.element.trigger(this.settings.eventNamespace + 'play');
+        },
+
+        onStopEvent: function () {
+            this.settings.onStop();
+            this.element.trigger(this.settings.eventNamespace + 'stop');
+        },
+
+        onReadyEvent: function () {
+            this.settings.onReady();
+            this.element.trigger(this.settings.eventNamespace + 'ready');
+        },
+
+        onBeforeChangeEvent: function ($current, $next) {
+            this.settings.onBeforeChange($current, $next);
+            this.element.trigger(this.settings.eventNamespace + 'beforechange', [$current, $next]);
+        },
+
+        onChangeEvent: function ($next, $current) {
+            this.settings.onChange($next, $current);
+            this.element.trigger(this.settings.eventNamespace + 'change', [$next, $current]);
+        },
+
+        destroy: function () {
+            this.stop();
+
+            return undefined;
         }
     });
 

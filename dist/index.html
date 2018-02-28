@@ -22,32 +22,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script src="tinygallery.jquery.js"></script>
     <script>
-        var gallery = $('.tg-gallery').tinyGallery({
-            keyboardArrows: true,
-            keyboardSpace: true,
-            autoresume: false,
-            onBeforeChange: (current, next) => {
-                console.log('Before change: ', current, next);
-            },
-            onChange: (current, previous) => {
-                console.log('Change: ', current, previous);
-            },
-            onPlay: () => {
-                console.log('Started playing');
-            },
-            onStop: () => {
-                console.log('Stopped playing');
-            }
+        let gallery = $('.tg-gallery').tinyGallery({
+
         });
-
-        gallery.goto(3);
-
-        console.log(gallery.current());
-
-        gallery.next();
-        gallery.next();
-        gallery.previous();
-
     </script>
 </body>
 </html>
