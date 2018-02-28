@@ -2,8 +2,6 @@
  *
  */
 ;(function ($, window, document) {
-    "use strict";
-
     const pluginName = "tinyGallery",
         defaults = {
             slideSelector: '.gallery-slide',
