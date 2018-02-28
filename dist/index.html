@@ -1,23 +1,9 @@
 <!doctype html>
 <html>
 <head>
-    <style>
-        .gallery-slide.active {
-            color: red;
-        }
-    </style>
+    <link href="style/style.css" rel="stylesheet">
 </head>
 <body>
-    <div class="tg-gallery">
-        <ul>
-            <li class="gallery-slide">1</li>
-            <li class="gallery-slide">2</li>
-            <li class="gallery-slide">3</li>
-            <li class="gallery-slide">4</li>
-            <li class="gallery-slide">5</li>
-        </ul>
-    </div>
-
     <div class="tg-gallery">
         <ul>
             <li class="gallery-slide">1</li>
@@ -32,14 +18,9 @@
     <script src="tinygallery.jquery.min.js"></script>
     <script>
         let gallery = $('.tg-gallery').tinyGallery({
-
+            autoplay: true,
+            duration: 1500
         });
-
-        gallery.end().css({
-            color: 'blue'
-        });
-
-        gallery.next();
     </script>
 </body>
 </html>

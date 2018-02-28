@@ -1,1 +1,42 @@
 @import "mixins";
+
+body {
+  margin: 0;
+}
+
+.tg-gallery {
+  @include gallery;
+
+  ul {
+    margin: 0;
+  }
+}
+
+.gallery-slide {
+  @include slide;
+
+  transition: opacity 1s;
+  width: 400px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 128px;
+  color: #FFFFFF;
+
+  &:nth-child(5n-4) {
+    background-color: red;
+  }
+  &:nth-child(5n-3) {
+    background-color: blue;
+  }
+  &:nth-child(5n-2) {
+    background-color: green;
+  }
+  &:nth-child(5n-1) {
+    background-color: darkviolet;
+  }
+  &:nth-child(5n) {
+    background-color: orange;
+  }
+}

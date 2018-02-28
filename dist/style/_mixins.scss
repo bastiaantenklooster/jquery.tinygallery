@@ -1,0 +1,19 @@
+@mixin gallery {
+  position: relative;
+  display: block;
+}
+
+@mixin slide {
+  position: absolute;
+  opacity: 0;
+  z-index: 0;
+  display: block;
+  margin: 0;
+  top: 0;
+  left: 0;
+
+  &.active {
+    opacity: 1;
+    z-index: 100;
+  }
+}
