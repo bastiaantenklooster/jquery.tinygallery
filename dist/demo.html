@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+    <link href="style/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="ts-gallery">
+        <ul class="slides">
+            <li class="gallery-slide">1</li>
+            <li class="gallery-slide">2</li>
+            <li class="gallery-slide">3</li>
+            <li class="gallery-slide">4</li>
+            <li class="gallery-slide">5</li>
+        </ul>
+        <button class="previous">&lt;</button>
+        <ul class="pagination">
+
+        </ul>
+        <button class="next">&gt;</button>
+        <button class="play">Play</button>
+        <button class="stop">Stop</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="tinyslides.jquery.min.js"></script>
+    <script>
+        let gallery = $('.ts-gallery').tinySlides({
+            keyboardArrows: true
+        });
+
+        $('button.previous').on('click', () => gallery.previous());
+        $('button.next').on('click', () => gallery.next());
+        $('button.play').on('click', () => gallery.play());
+        $('button.stop').on('click', () => gallery.stop());
+
+        for(const index of [...gallery.slides()].keys()) {
+            $('<li>').appendTo('.ts-gallery .pagination')
+                .append('<button>')
+                .find('button')
+                    .text(index+1)
+                    .on('click', event => gallery.goto(index));
+        }
+    </script>
+</body>
+</html>
