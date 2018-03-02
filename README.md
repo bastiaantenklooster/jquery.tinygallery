@@ -1,6 +1,6 @@
 # jquery.tinySlides
 
-A very small, barebones jQuery gallery/slider plugin.
+A very small (3,77kb minified), barebones jQuery gallery/slider plugin.
 This plugin, unlike many other slider plugins, does not include any DOM controls, transitions or styling.
 It only keeps track of the gallery's state and provides a simple API to create additional interaction.
 This makes it extremely lightweight and flexible.
