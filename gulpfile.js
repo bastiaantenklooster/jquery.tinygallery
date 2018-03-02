@@ -43,7 +43,7 @@ function es6(dir, file) {
 }
 
 gulp.task('es6', function () {
-    return es6(dirs.script_src, 'tinygallery.jquery.js');
+    return es6(dirs.script_src, 'tinyslides.jquery.js');
 });
 
 gulp.task('scss', function () {

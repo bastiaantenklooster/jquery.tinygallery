@@ -2,7 +2,7 @@
  *
  */
 ;(function ($, window, document) {
-    const pluginName = "tinyGallery",
+    const pluginName = "tinySlides",
         defaults = {
             slideSelector: '.gallery-slide',
             activeClass: 'active',
@@ -30,6 +30,12 @@
         this.galleryElement = element.first();
 
         this.settings = $.extend({}, defaults, options);
+
+        if (typeof this.settings.duration !== 'function') {
+            const duration = this.settings.duration;
+            this.settings.duration = () => duration;
+        }
+
         this.defaults = defaults;
         this.name = pluginName;
         this.playing = false;
@@ -48,6 +54,11 @@
             play: () => this.play(),
             stop: () => this.stop(),
             setting: (key, value) => {
+                if (key === 'duration' && typeof value !== 'function') {
+                    const duration = value;
+                    value = () => duration;
+                }
+
                 this.settings[key] = value;
             },
             destroy: () => this.destroy(),
@@ -86,7 +97,11 @@
         },
 
         play: function () {
-            const timeout = () => this.playTimeout = setTimeout(loop, this.settings.duration);
+            const timeout = () => this.playTimeout = setTimeout(loop,
+                this.settings.duration(
+                    this.getActiveSlide(this.getSlides())
+                )
+            );
             const loop = () => {
                 if (this.ready()) {
                     this.next(true);
