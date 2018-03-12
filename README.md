@@ -47,8 +47,8 @@ The plugin accepts several options,
 - `onPlay`: Callback that runs when autoplay is activated
 - `onStop`: Callback that runs after autoplay is stopped
 - `onReady`: Callback that runs the first time the `await` callback returns false
-- `await`: Skip autoplay iterations while this callback returns true. This can be used to only start playing until after an event has occurred, such as loading an image. Default is (slides, current) => false,
-- `eventNamespace`: Namespace for the plugin API events. Default is pluginName.toLowerCase()
+- `await`: Skip autoplay iterations while this callback returns true. This can be used to only start playing until after an event has occurred, such as loading an image. Default is `(slides, current) => false`,
+- `eventNamespace`: Namespace for the plugin API events. Default is `pluginName.toLowerCase()` (tinyslides)
 
 These options can later be modified using the `setting()` API method.
 
@@ -75,12 +75,12 @@ gallery.next();
 - `gallery.stop()` Pause play mode
 - `gallery.setting(option, value)` Update one of the plugin's options
 - `gallery.destroy()` Stop the gallery. Returns undefined, so you can destroy the gallery by using `gallery = gallery.destroy()`.
-- `gallery.end()` Go back to jQuery's default methode chaining. Basically, this method returns `$(container)`.
+- `gallery.end()` Return to jQuery's default method chaining. Basically, this method returns `$(container)`.
 
 ### Events
 
 These events will fire after the callbacks defined under Options.
-All events are prefixed with `eventNamespace` from the options.
+All events are prefixed with `eventNamespace` (tinyslides) from the options.
 
 - `tinyslideschange`
 - `tinyslidesbeforechange`

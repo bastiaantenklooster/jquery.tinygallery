@@ -1,5 +1,5 @@
 /**
- *
+ * jQuery.tinySlides by Bastiaan ten Klooster
  */
 ;(function ($, window, document) {
     const pluginName = "tinySlides",

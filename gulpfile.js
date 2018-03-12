@@ -34,11 +34,9 @@ function scss(dir, file) {
 
 function es6(dir, file) {
     gulp.src(dir + file)
-        .pipe(sourcemaps.init())
         .pipe(babel())
         .pipe(uglify())
         .pipe(rename({ suffix: '.min' }))
-        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(dirs.script_src));
 }
 
