@@ -6,7 +6,7 @@ const declare = require('gulp-declare');
 const concat = require('gulp-concat');
 const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
-const uglify = require('gulp-uglify');
+const minify = require('gulp-minify');
 
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
@@ -35,8 +35,12 @@ function scss(dir, file) {
 function es6(dir, file) {
     gulp.src(dir + file)
         .pipe(babel())
-        .pipe(uglify())
-        .pipe(rename({ suffix: '.min' }))
+        .pipe(minify({
+            preserveComments: 'some',
+            ext: {
+                min: '.min.js'
+            }
+        }))
         .pipe(gulp.dest(dirs.script_src));
 }
 

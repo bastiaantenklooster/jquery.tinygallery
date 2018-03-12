@@ -1,31 +1,46 @@
-/**
+/*!
  * jQuery.tinySlides by Bastiaan ten Klooster
  */
+'use strict';
+
+function _toConsumableArray(arr) {
+    if (Array.isArray(arr)) {
+        for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];return arr2;
+    } else {
+        return Array.from(arr);
+    }
+}
+
 ;(function ($, window, document) {
-    const pluginName = "tinySlides",
+    var n = $.noop;
+    var pluginName = "tinySlides",
         defaults = {
-            slideSelector: '.gallery-slide',
-            activeClass: 'active',
-            start: 0,
-            autoplay: !1,
-            random: !1,
-            backwards: !1,
-            autoresume: !0,
-            duration: 2000,
-            keyboard: !0,
-            keyboardArrows: !1,
-            keyboardSpace: !1,
-            onChange: $.noop,
-            onBeforeChange: $.noop,
-            onPlay: $.noop,
-            onStop: $.noop,
-            onReady: $.noop,
-            await: (slides, current) => !1,
-            eventNamespace: pluginName.toLowerCase()
+        slideSelector: '.gallery-slide',
+        activeClass: 'active',
+        start: 0,
+        autoplay: !1,
+        random: !1,
+        backwards: !1,
+        autoresume: !0,
+        duration: 2000,
+        keyboard: !0,
+        keyboardArrows: !1,
+        keyboardSpace: !1,
+        onChange: n,
+        onBeforeChange: n,
+        onPlay: n,
+        onStop: n,
+        onReady: n,
+        await: function await(slides, current) {
+            return !1;
         },
+        eventNamespace: pluginName.toLowerCase()
+    },
         dataKey = "plugin_" + pluginName;
 
     function Plugin(element, options) {
+        var _this = this;
+
         this.element = element;
 
         // A gallery can only be initialized on a single container
@@ -34,8 +49,12 @@
         this.settings = $.extend({}, defaults, options);
 
         if (typeof this.settings.duration !== 'function') {
-            const duration = this.settings.duration;
-            this.settings.duration = () => duration;
+            (function () {
+                var duration = _this.settings.duration;
+                _this.settings.duration = function () {
+                    return duration;
+                };
+            })();
         }
 
         this.defaults = defaults;
@@ -48,65 +67,90 @@
         this.init();
 
         return {
-            current: () => this.getActiveSlide(this.getSlides()),
-            slides: () => this.getSlides(),
-            next: () => this.next(),
-            previous: () => this.previous(),
-            goto: (index) => this.goto(index),
-            play: () => this.play(),
-            stop: () => this.stop(),
-            setting: (key, value) => {
+            current: function current() {
+                return _this.getActiveSlide(_this.getSlides());
+            },
+            slides: function slides() {
+                return _this.getSlides();
+            },
+            next: function next() {
+                return _this.next();
+            },
+            previous: function previous() {
+                return _this.previous();
+            },
+            goto: function goto(index) {
+                return _this.goto(index);
+            },
+            play: function play() {
+                return _this.play();
+            },
+            stop: function stop() {
+                return _this.stop();
+            },
+            setting: function setting(key, value) {
                 if (key === 'duration' && typeof value !== 'function') {
-                    const duration = value;
-                    value = () => duration;
+                    (function () {
+                        var duration = value;
+                        value = function () {
+                            return duration;
+                        };
+                    })();
                 }
 
-                this.settings[key] = value;
+                _this.settings[key] = value;
             },
-            destroy: () => this.destroy(),
-            end: () => this.element
+            destroy: function destroy() {
+                return _this.destroy();
+            },
+            end: function end() {
+                return _this.element;
+            }
         };
     }
 
     $.extend(Plugin.prototype, {
-        init: function () {
+        init: function init() {
+            var _this2 = this;
+
             if (this.getActiveSlide(this.getSlides()).index() < 0) {
                 this.setActiveSlide(this.settings.start);
             }
 
-            $(document).on('keyup', (e) => this.handleKeys(e));
+            $(document).on('keyup', function (e) {
+                return _this2.handleKeys(e);
+            });
 
             if (this.settings.autoplay) {
                 this.play();
             }
 
-            const ready = this.ready();
+            var ready = this.ready();
         },
 
-        handleKeys: function (event) {
-            const key = event.which;
+        handleKeys: function handleKeys(event) {
+            var key = event.which;
 
             if (this.settings.keyboard) {
                 if (this.settings.keyboardSpace && key === 32) {
                     this.next();
                 }
 
-                if (this.settings.keyboardArrows &&
-                    (key === 37 || key === 39)) {
+                if (this.settings.keyboardArrows && (key === 37 || key === 39)) {
                     this.change(key - 38);
                 }
             }
         },
 
-        play: function () {
-            const timeout = () => this.playTimeout = setTimeout(loop,
-                this.settings.duration(
-                    this.getActiveSlide(this.getSlides())
-                )
-            );
-            const loop = () => {
-                if (this.ready()) {
-                    this.progress(this.settings.backwards?-1:1, true);
+        play: function play() {
+            var _this3 = this;
+
+            var timeout = function timeout() {
+                return _this3.playTimeout = setTimeout(loop, _this3.settings.duration(_this3.getActiveSlide(_this3.getSlides())));
+            };
+            var loop = function loop() {
+                if (_this3.ready()) {
+                    _this3.progress(_this3.settings.backwards ? -1 : 1, true);
                 }
 
                 timeout();
@@ -119,7 +163,7 @@
             timeout();
         },
 
-        stop: function () {
+        stop: function stop() {
             this.previousPlayingState = this.playing;
 
             this.playing = false;
@@ -128,9 +172,9 @@
             this.onStopEvent();
         },
 
-        ready: function () {
-            const $slides = this.getSlides();
-            const ready = !this.settings.await($slides, this.getActiveSlide($slides));
+        ready: function ready() {
+            var $slides = this.getSlides();
+            var ready = !this.settings.await($slides, this.getActiveSlide($slides));
 
             if (ready && ready !== this.previousReadyState) {
                 this.onReadyEvent();
@@ -141,40 +185,41 @@
             return ready;
         },
 
-        setActiveSlide: function (index) {
-            const $slides = this.getSlides();
+        setActiveSlide: function setActiveSlide(index) {
+            var $slides = this.getSlides();
+            var activeClass = this.settings.activeClass;
 
-            $slides.not(':eq('+index+')').removeClass(this.settings.activeClass);
+            $slides.not(':eq(' + index + ')').removeClass(activeClass);
 
-            $slides.eq(index).addClass(this.settings.activeClass);
+            $slides.eq(index).addClass(activeClass);
         },
 
-        getSlides: function () {
+        getSlides: function getSlides() {
             return $(this.galleryElement).find(this.settings.slideSelector);
         },
 
-        getActiveSlide: function (slides) {
-            const plugin = this;
+        getActiveSlide: function getActiveSlide(slides) {
+            var plugin = this;
 
             return slides.filter(function () {
                 return $(this).hasClass(plugin.settings.activeClass);
             }).first();
         },
 
-        next: function (auto) {
+        next: function next(auto) {
             return this.progress(1, auto);
         },
 
-        previous: function (auto) {
+        previous: function previous(auto) {
             return this.progress(-1, auto);
         },
 
-        progress: function (difference, auto) {
-            const $slides = this.getSlides();
-            const $current = this.getActiveSlide($slides);
+        progress: function progress(difference, auto) {
+            var $slides = this.getSlides();
+            var $current = this.getActiveSlide($slides);
 
             if (this.settings.random) {
-                const keys = [ ...Array($slides.length).keys() ];
+                var keys = [].concat(_toConsumableArray(Array($slides.length).keys()));
                 keys.splice($current.index(), 1);
                 return this.goto(keys[Math.floor(Math.random() * ($slides.length - 1))]);
             }
@@ -182,23 +227,22 @@
             return this.change(difference, auto);
         },
 
-        goto: function (index) {
-            const $slides = this.getSlides();
-            const $current = this.getActiveSlide($slides);
+        goto: function goto(index) {
+            var $slides = this.getSlides();
+            var $current = this.getActiveSlide($slides);
 
             return this.change(index - $current.index());
         },
 
-        change: function (difference, auto) {
+        change: function change(difference, auto) {
             if (!auto && this.playing) {
                 this.stop();
             }
 
-            const $slides = this.getSlides();
-            const $current = this.getActiveSlide($slides);
-            const index = $current.index();
-            const nextIndex = (index + difference) % $slides.length;
-            const $next = $slides.eq(nextIndex);
+            var $slides = this.getSlides();
+            var $current = this.getActiveSlide($slides);
+            var nextIndex = ($current.index() + difference) % $slides.length;
+            var $next = $slides.eq(nextIndex);
 
             this.onBeforeChangeEvent($current, $next);
 
@@ -216,32 +260,34 @@
             };
         },
 
-        onPlayEvent: function () {
-            this.settings.onPlay();
-            this.galleryElement.trigger(this.settings.eventNamespace + 'play');
+        onPlayEvent: function onPlayEvent() {
+            this.onGeneric('play');
         },
 
-        onStopEvent: function () {
-            this.settings.onStop();
-            this.galleryElement.trigger(this.settings.eventNamespace + 'stop');
+        onStopEvent: function onStopEvent() {
+            this.onGeneric('stop');
         },
 
-        onReadyEvent: function () {
-            this.settings.onReady();
-            this.galleryElement.trigger(this.settings.eventNamespace + 'ready');
+        onReadyEvent: function onReadyEvent() {
+            this.onGeneric('ready');
         },
 
-        onBeforeChangeEvent: function ($current, $next) {
+        onGeneric: function onGeneric(name) {
+            this.settings['on' + name.charAt(0).toUpperCase() + name.substr(1)]();
+            this.galleryElement.trigger(this.settings.eventNamespace + name);
+        },
+
+        onBeforeChangeEvent: function onBeforeChangeEvent($current, $next) {
             this.settings.onBeforeChange($current, $next);
             this.galleryElement.trigger(this.settings.eventNamespace + 'beforechange', [$current, $next]);
         },
 
-        onChangeEvent: function ($next, $current) {
+        onChangeEvent: function onChangeEvent($next, $current) {
             this.settings.onChange($next, $current);
             this.galleryElement.trigger(this.settings.eventNamespace + 'change', [$next, $current]);
         },
 
-        destroy: function () {
+        destroy: function destroy() {
             this.stop();
 
             return undefined;
@@ -249,7 +295,7 @@
     });
 
     $.fn[pluginName] = function (options) {
-        let plugin = this.data(dataKey);
+        var plugin = this.data(dataKey);
 
         if (!plugin) {
             plugin = new Plugin(this, options);
@@ -258,5 +304,4 @@
 
         return plugin;
     };
-
 })(jQuery, window, document);
