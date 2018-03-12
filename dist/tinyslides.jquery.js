@@ -1,46 +1,32 @@
 /*!
  * jQuery.tinySlides by Bastiaan ten Klooster
  */
-'use strict';
-
-function _toConsumableArray(arr) {
-    if (Array.isArray(arr)) {
-        for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];return arr2;
-    } else {
-        return Array.from(arr);
-    }
-}
-
 ;(function ($, window, document) {
-    var n = $.noop;
-    var pluginName = "tinySlides",
+    const n = $.noop;
+    const pluginName = "tinySlides",
         defaults = {
-        slideSelector: '.gallery-slide',
-        activeClass: 'active',
-        start: 0,
-        autoplay: !1,
-        random: !1,
-        backwards: !1,
-        autoresume: !0,
-        duration: 2000,
-        keyboard: !0,
-        keyboardArrows: !1,
-        keyboardSpace: !1,
-        onChange: n,
-        onBeforeChange: n,
-        onPlay: n,
-        onStop: n,
-        onReady: n,
-        await: function await(slides, current) {
-            return !1;
+            slideSelector: '.gallery-slide',
+            activeClass: 'active',
+            start: 0,
+            autoplay: !1,
+            random: !1,
+            backwards: !1,
+            autoresume: !0,
+            duration: 2000,
+            keyboard: !0,
+            keyboardArrows: !1,
+            keyboardSpace: !1,
+            onChange: n,
+            onBeforeChange: n,
+            onPlay: n,
+            onStop: n,
+            onReady: n,
+            await: (slides, current) => !1,
+            eventNamespace: pluginName.toLowerCase()
         },
-        eventNamespace: pluginName.toLowerCase()
-    },
         dataKey = "plugin_" + pluginName;
 
     function Plugin(element, options) {
-        var _this = this;
-
         this.element = element;
 
         // A gallery can only be initialized on a single container
@@ -49,12 +35,8 @@ function _toConsumableArray(arr) {
         this.settings = $.extend({}, defaults, options);
 
         if (typeof this.settings.duration !== 'function') {
-            (function () {
-                var duration = _this.settings.duration;
-                _this.settings.duration = function () {
-                    return duration;
-                };
-            })();
+            const duration = this.settings.duration;
+            this.settings.duration = () => duration;
         }
 
         this.defaults = defaults;
@@ -67,90 +49,65 @@ function _toConsumableArray(arr) {
         this.init();
 
         return {
-            current: function current() {
-                return _this.getActiveSlide(_this.getSlides());
-            },
-            slides: function slides() {
-                return _this.getSlides();
-            },
-            next: function next() {
-                return _this.next();
-            },
-            previous: function previous() {
-                return _this.previous();
-            },
-            goto: function goto(index) {
-                return _this.goto(index);
-            },
-            play: function play() {
-                return _this.play();
-            },
-            stop: function stop() {
-                return _this.stop();
-            },
-            setting: function setting(key, value) {
+            current: () => this.getActiveSlide(this.getSlides()),
+            slides: () => this.getSlides(),
+            next: () => this.next(),
+            previous: () => this.previous(),
+            goto: (index) => this.goto(index),
+            play: () => this.play(),
+            stop: () => this.stop(),
+            setting: (key, value) => {
                 if (key === 'duration' && typeof value !== 'function') {
-                    (function () {
-                        var duration = value;
-                        value = function () {
-                            return duration;
-                        };
-                    })();
+                    const duration = value;
+                    value = () => duration;
                 }
 
-                _this.settings[key] = value;
+                this.settings[key] = value;
             },
-            destroy: function destroy() {
-                return _this.destroy();
-            },
-            end: function end() {
-                return _this.element;
-            }
+            destroy: () => this.destroy(),
+            end: () => this.element
         };
     }
 
     $.extend(Plugin.prototype, {
-        init: function init() {
-            var _this2 = this;
-
+        init: function () {
             if (this.getActiveSlide(this.getSlides()).index() < 0) {
                 this.setActiveSlide(this.settings.start);
             }
 
-            $(document).on('keyup', function (e) {
-                return _this2.handleKeys(e);
-            });
+            $(document).on('keyup', (e) => this.handleKeys(e));
 
             if (this.settings.autoplay) {
                 this.play();
             }
 
-            var ready = this.ready();
+            const ready = this.ready();
         },
 
-        handleKeys: function handleKeys(event) {
-            var key = event.which;
+        handleKeys: function (event) {
+            const key = event.which;
 
             if (this.settings.keyboard) {
                 if (this.settings.keyboardSpace && key === 32) {
                     this.next();
                 }
 
-                if (this.settings.keyboardArrows && (key === 37 || key === 39)) {
+                if (this.settings.keyboardArrows &&
+                    (key === 37 || key === 39)) {
                     this.change(key - 38);
                 }
             }
         },
 
-        play: function play() {
-            var _this3 = this;
-
-            var timeout = function timeout() {
-                return _this3.playTimeout = setTimeout(loop, _this3.settings.duration(_this3.getActiveSlide(_this3.getSlides())));
-            };
-            var loop = function loop() {
-                if (_this3.ready()) {
-                    _this3.progress(_this3.settings.backwards ? -1 : 1, true);
+        play: function () {
+            const timeout = () => this.playTimeout = setTimeout(loop,
+                this.settings.duration(
+                    this.getActiveSlide(this.getSlides())
+                )
+            );
+            const loop = () => {
+                if (this.ready()) {
+                    this.progress(this.settings.backwards ? -1 : 1, true);
                 }
 
                 timeout();
@@ -163,7 +120,7 @@ function _toConsumableArray(arr) {
             timeout();
         },
 
-        stop: function stop() {
+        stop: function () {
             this.previousPlayingState = this.playing;
 
             this.playing = false;
@@ -172,9 +129,9 @@ function _toConsumableArray(arr) {
             this.onStopEvent();
         },
 
-        ready: function ready() {
-            var $slides = this.getSlides();
-            var ready = !this.settings.await($slides, this.getActiveSlide($slides));
+        ready: function () {
+            const $slides = this.getSlides();
+            const ready = !this.settings.await($slides, this.getActiveSlide($slides));
 
             if (ready && ready !== this.previousReadyState) {
                 this.onReadyEvent();
@@ -185,41 +142,41 @@ function _toConsumableArray(arr) {
             return ready;
         },
 
-        setActiveSlide: function setActiveSlide(index) {
-            var $slides = this.getSlides();
-            var activeClass = this.settings.activeClass;
+        setActiveSlide: function (index) {
+            const $slides = this.getSlides();
+            const activeClass = this.settings.activeClass;
 
             $slides.not(':eq(' + index + ')').removeClass(activeClass);
 
             $slides.eq(index).addClass(activeClass);
         },
 
-        getSlides: function getSlides() {
+        getSlides: function () {
             return $(this.galleryElement).find(this.settings.slideSelector);
         },
 
-        getActiveSlide: function getActiveSlide(slides) {
-            var plugin = this;
+        getActiveSlide: function (slides) {
+            const plugin = this;
 
             return slides.filter(function () {
                 return $(this).hasClass(plugin.settings.activeClass);
             }).first();
         },
 
-        next: function next(auto) {
+        next: function (auto) {
             return this.progress(1, auto);
         },
 
-        previous: function previous(auto) {
+        previous: function (auto) {
             return this.progress(-1, auto);
         },
 
-        progress: function progress(difference, auto) {
-            var $slides = this.getSlides();
-            var $current = this.getActiveSlide($slides);
+        progress: function (difference, auto) {
+            const $slides = this.getSlides();
+            const $current = this.getActiveSlide($slides);
 
             if (this.settings.random) {
-                var keys = [].concat(_toConsumableArray(Array($slides.length).keys()));
+                const keys = [...Array($slides.length).keys()];
                 keys.splice($current.index(), 1);
                 return this.goto(keys[Math.floor(Math.random() * ($slides.length - 1))]);
             }
@@ -227,22 +184,22 @@ function _toConsumableArray(arr) {
             return this.change(difference, auto);
         },
 
-        goto: function goto(index) {
-            var $slides = this.getSlides();
-            var $current = this.getActiveSlide($slides);
+        goto: function (index) {
+            const $slides = this.getSlides();
+            const $current = this.getActiveSlide($slides);
 
             return this.change(index - $current.index());
         },
 
-        change: function change(difference, auto) {
+        change: function (difference, auto) {
             if (!auto && this.playing) {
                 this.stop();
             }
 
-            var $slides = this.getSlides();
-            var $current = this.getActiveSlide($slides);
-            var nextIndex = ($current.index() + difference) % $slides.length;
-            var $next = $slides.eq(nextIndex);
+            const $slides = this.getSlides();
+            const $current = this.getActiveSlide($slides);
+            const nextIndex = ($current.index() + difference) % $slides.length;
+            const $next = $slides.eq(nextIndex);
 
             this.onBeforeChangeEvent($current, $next);
 
@@ -260,34 +217,34 @@ function _toConsumableArray(arr) {
             };
         },
 
-        onPlayEvent: function onPlayEvent() {
+        onPlayEvent: function () {
             this.onGeneric('play');
         },
 
-        onStopEvent: function onStopEvent() {
+        onStopEvent: function () {
             this.onGeneric('stop');
         },
 
-        onReadyEvent: function onReadyEvent() {
+        onReadyEvent: function () {
             this.onGeneric('ready');
         },
 
-        onGeneric: function onGeneric(name) {
+        onGeneric: function (name) {
             this.settings['on' + name.charAt(0).toUpperCase() + name.substr(1)]();
             this.galleryElement.trigger(this.settings.eventNamespace + name);
         },
 
-        onBeforeChangeEvent: function onBeforeChangeEvent($current, $next) {
+        onBeforeChangeEvent: function ($current, $next) {
             this.settings.onBeforeChange($current, $next);
             this.galleryElement.trigger(this.settings.eventNamespace + 'beforechange', [$current, $next]);
         },
 
-        onChangeEvent: function onChangeEvent($next, $current) {
+        onChangeEvent: function ($next, $current) {
             this.settings.onChange($next, $current);
             this.galleryElement.trigger(this.settings.eventNamespace + 'change', [$next, $current]);
         },
 
-        destroy: function destroy() {
+        destroy: function () {
             this.stop();
 
             return undefined;
@@ -295,7 +252,7 @@ function _toConsumableArray(arr) {
     });
 
     $.fn[pluginName] = function (options) {
-        var plugin = this.data(dataKey);
+        let plugin = this.data(dataKey);
 
         if (!plugin) {
             plugin = new Plugin(this, options);
@@ -304,4 +261,5 @@ function _toConsumableArray(arr) {
 
         return plugin;
     };
+
 })(jQuery, window, document);

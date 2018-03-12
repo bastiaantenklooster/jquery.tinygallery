@@ -39,7 +39,8 @@ function es6(dir, file) {
             preserveComments: 'some',
             ext: {
                 min: '.min.js'
-            }
+            },
+            noSource: true
         }))
         .pipe(gulp.dest(dirs.script_src));
 }
