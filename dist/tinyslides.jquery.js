@@ -7,18 +7,20 @@
             slideSelector: '.gallery-slide',
             activeClass: 'active',
             start: 0,
-            autoplay: false,
-            autoresume: true,
+            autoplay: !1,
+            random: !1,
+            backwards: !1,
+            autoresume: !0,
             duration: 2000,
-            keyboard: true,
-            keyboardArrows: false,
-            keyboardSpace: false,
+            keyboard: !0,
+            keyboardArrows: !1,
+            keyboardSpace: !1,
             onChange: $.noop,
             onBeforeChange: $.noop,
             onPlay: $.noop,
             onStop: $.noop,
             onReady: $.noop,
-            await: (slides, current) => false,
+            await: (slides, current) => !1,
             eventNamespace: pluginName.toLowerCase()
         },
         dataKey = "plugin_" + pluginName;
@@ -104,7 +106,7 @@
             );
             const loop = () => {
                 if (this.ready()) {
-                    this.next(true);
+                    this.progress(this.settings.backwards?-1:1, true);
                 }
 
                 timeout();
@@ -160,11 +162,24 @@
         },
 
         next: function (auto) {
-            return this.change(1, auto);
+            return this.progress(1, auto);
         },
 
         previous: function (auto) {
-            return this.change(-1, auto);
+            return this.progress(-1, auto);
+        },
+
+        progress: function (difference, auto) {
+            const $slides = this.getSlides();
+            const $current = this.getActiveSlide($slides);
+
+            if (this.settings.random) {
+                const keys = [ ...Array($slides.length).keys() ];
+                keys.splice($current.index(), 1);
+                return this.goto(keys[Math.floor(Math.random() * ($slides.length - 1))]);
+            }
+
+            return this.change(difference, auto);
         },
 
         goto: function (index) {
